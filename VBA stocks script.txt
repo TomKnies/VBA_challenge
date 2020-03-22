@@ -1,0 +1,98 @@
+' Ticker / Date / Open / High / Low / Close / Volume
+' Add - Ticker / Yearly Change / Percent Change / Total Stock Volume
+
+Sub TickOne()
+
+    Dim i As Long
+    Dim TickName As String
+    Dim TSV As Double
+    Dim SumTrow As Integer
+    
+    SumTrow = 2
+    TSV = 0
+
+    For Each ws In Worksheets
+        
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percent Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+        
+        lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        LastColumn = ws.Cells(1, Columns.Count).End(xlToLeft).Column
+        
+        Next ws
+    
+    
+    For i = 2 To lastrow
+        
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            TickName = Cells(i, 1).Value
+            
+            TSV = TSV + Cells(i, 7).Value
+            
+            Range("I" & SumTrow).Value = TickName
+            
+            Range("L" & SumTrow).Value = TSV
+            
+            SumTrow = SumTrow + 1
+            
+        Else
+            
+            TSV = TSV + Cells(i, 7).Value
+            
+        End If
+        
+    
+    Next i
+    
+    Dim Yopen As Double
+    Dim Yclose As Double
+    Dim RowChange As Long
+    Dim StartOpen As Double
+    Dim Ychange As Double
+    Dim Pchange As Double
+        
+        
+    Cells(2, 3).NumberFormat = "0.00"
+    StartOpen = Cells(2, 3).Value
+    RowChange = 2
+    
+    For i = 2 To lastrow
+        
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            Yopen = Cells(i, 3).Value
+            Yclose = Cells(i, 6).Value
+            Ychange = Yclose - StartOpen
+            Range("J" & RowChange).Value = Ychange
+            
+            
+            If StartOpen = 0 Then
+                Pchange = Ychange / 1
+            Else
+                Pchange = Ychange / StartOpen
+                Range("K" & RowChange).Value = Pchange
+                Range("K" & RowChange).NumberFormat = "0.00%"
+            End If
+            
+            RowChange = RowChange + 1
+            
+            StartOpen = Cells(i + 1, 3).Value
+            
+        End If
+        
+        
+        If Cells(i, 10).Value > 0 Then
+            Cells(i, 10).Interior.ColorIndex = 4
+            
+        ElseIf Cells(i, 10).Value < 0 Then
+            Cells(i, 10).Interior.ColorIndex = 3
+            
+        End If
+        
+    
+    Next i
+
+End Sub
+
+
